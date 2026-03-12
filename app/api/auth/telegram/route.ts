@@ -27,12 +27,14 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
 
   const data: Record<string, string> = {};
-  searchParams.forEach((value, key) => {
-    data[key] = value;
-  });
+  searchParams.forEach((value, key) => { data[key] = value; });
 
-  const botToken = process.env.BOT_TOKEN!;
-  const isValid = verifyTelegramAuth(data, botToken);
+  console.log("Auth data received:", JSON.stringify(data));
+  console.log("BOT_TOKEN exists:", !!process.env.BOT_TOKEN);
+  console.log("BOT_TOKEN length:", process.env.BOT_TOKEN?.length);
+
+  const isValid = verifyTelegramAuth(data, process.env.BOT_TOKEN!);
+  console.log("Hash valid:", isValid);
 
   if (!isValid) {
     return NextResponse.json({ error: "Invalid auth" }, { status: 401 });
