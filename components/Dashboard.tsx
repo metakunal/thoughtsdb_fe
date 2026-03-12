@@ -18,26 +18,24 @@ interface Save {
 
 interface Props {
   initialSaves: Save[];
+  userId: string;
+  firstName: string;
 }
 
-// Hardcode your userId for now — Day 6 will handle multi-user auth
-const USER_ID = process.env.NEXT_PUBLIC_USER_ID || "";
-
-export default function Dashboard({ initialSaves }: Props) {
+export default function Dashboard({ initialSaves, userId, firstName }: Props) {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
   const [saves, setSaves] = useState<Save[]>(initialSaves);
   const [mode, setMode] = useState<"recent" | "search">("recent");
   const [isPending, startTransition] = useTransition();
 
-  // Re-filter recent saves client-side when filter changes
   useEffect(() => {
     if (mode === "recent") {
-      if (filter === "all") {
-        setSaves(initialSaves);
-      } else {
-        setSaves(initialSaves.filter(s => s.source_type === filter));
-      }
+      setSaves(
+        filter === "all"
+          ? initialSaves
+          : initialSaves.filter((s) => s.source_type === filter)
+      );
     }
   }, [filter, mode, initialSaves]);
 
@@ -51,7 +49,9 @@ export default function Dashboard({ initialSaves }: Props) {
 
     startTransition(async () => {
       setMode("search");
-      const res = await fetch(`/api/search?q=${encodeURIComponent(query)}&userId=${USER_ID}`);
+      const res = await fetch(
+        `/api/search?q=${encodeURIComponent(query)}&userId=${userId}`
+      );
       const data = await res.json();
       setSaves(data.results || []);
     });
@@ -63,12 +63,11 @@ export default function Dashboard({ initialSaves }: Props) {
     setSaves(initialSaves);
   }
 
-  const resultLabel =
-    isPending
-      ? "Searching..."
-      : mode === "search"
-      ? `${saves.length} result${saves.length !== 1 ? "s" : ""} for "${query}"`
-      : `${saves.length} recent saves`;
+  const resultLabel = isPending
+    ? "Searching..."
+    : mode === "search"
+    ? `${saves.length} result${saves.length !== 1 ? "s" : ""} for "${query}"`
+    : `${saves.length} recent saves`;
 
   return (
     <div className="min-h-screen bg-[#0c0c0c]">
@@ -88,7 +87,7 @@ export default function Dashboard({ initialSaves }: Props) {
             <input
               className="search-input flex-1 bg-[#141414] border border-[#1e1e1e] text-[#e2d9c8] px-4 py-2.5 text-sm font-serif placeholder:text-[#333] transition-colors"
               value={query}
-              onChange={e => setQuery(e.target.value)}
+              onChange={(e) => setQuery(e.target.value)}
               placeholder="Search your saved knowledge..."
             />
             {mode === "search" && (
@@ -107,16 +106,32 @@ export default function Dashboard({ initialSaves }: Props) {
               Search
             </button>
           </form>
+
+          {/* User info + logout */}
+          <div className="flex items-center gap-4 shrink-0">
+            <span className="font-mono text-[11px] text-[#444] hidden sm:block">
+              {firstName}
+            </span>
+            <a
+              href="/api/auth/logout"
+              className="font-mono text-[10px] text-[#333] tracking-widest uppercase hover:text-[#666] transition-colors"
+            >
+              Logout
+            </a>
+          </div>
         </div>
       </header>
 
       <main className="mx-auto max-w-6xl px-6 py-8">
         {/* Filter bar */}
         <div className="flex gap-2 flex-wrap mb-8">
-          {FILTERS.map(f => (
+          {FILTERS.map((f) => (
             <button
               key={f}
-              onClick={() => { setFilter(f); if (mode === "search") clearSearch(); }}
+              onClick={() => {
+                setFilter(f);
+                if (mode === "search") clearSearch();
+              }}
               className={`font-mono text-[10px] tracking-widest uppercase px-3 py-1.5 border transition-colors ${
                 filter === f
                   ? "border-[#e2d9c8] text-[#e2d9c8]"
@@ -129,7 +144,7 @@ export default function Dashboard({ initialSaves }: Props) {
         </div>
 
         {/* Results meta */}
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6">
           <span className="font-mono text-[11px] text-[#444] tracking-widest uppercase">
             {resultLabel}
           </span>
@@ -139,7 +154,9 @@ export default function Dashboard({ initialSaves }: Props) {
         {!isPending && saves.length === 0 && (
           <div className="py-24 text-center">
             <p className="font-mono text-sm text-[#333]">
-              {mode === "search" ? `Nothing found for "${query}"` : "Nothing saved yet."}
+              {mode === "search"
+                ? `Nothing found for "${query}"`
+                : "Nothing saved yet. Send something to your bot."}
             </p>
           </div>
         )}
