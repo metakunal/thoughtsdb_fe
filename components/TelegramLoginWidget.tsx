@@ -6,6 +6,8 @@ export default function TelegramLoginWidget() {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    console.log("Bot username:", process.env.NEXT_PUBLIC_BOT_USERNAME);
+    console.log("Auth URL:", `${window.location.origin}/api/auth/telegram`);
     if (!ref.current) return;
 
     const script = document.createElement("script");
