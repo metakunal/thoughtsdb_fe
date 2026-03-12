@@ -1,19 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+
+  // Allow these through always
+  if (
+    pathname.startsWith("/api") ||
+    pathname.startsWith("/_next") ||
+    pathname === "/favicon.ico"
+  ) {
+    return NextResponse.next();
+  }
+
   const userId = req.cookies.get("tg_user_id")?.value;
-  const isLoginPage = req.nextUrl.pathname === "/login";
-  const isApiRoute = req.nextUrl.pathname.startsWith("/api");
+  const isLoginPage = pathname === "/login";
 
-  // Allow API routes through always
-  if (isApiRoute) return NextResponse.next();
+  console.log("Middleware path:", pathname, "userId:", userId, "cookies:", req.cookies.getAll().map(c => c.name).join(", "));
 
-  // Redirect to login if no session
   if (!userId && !isLoginPage) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  // Redirect away from login if already authenticated
   if (userId && isLoginPage) {
     return NextResponse.redirect(new URL("/", req.url));
   }
