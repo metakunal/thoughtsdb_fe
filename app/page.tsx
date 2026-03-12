@@ -4,7 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 import Dashboard from "@/components/Dashboard";
 
 export default async function Page() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const userId = cookieStore.get("tg_user_id")?.value;
   const firstName = cookieStore.get("tg_first_name")?.value;
 
