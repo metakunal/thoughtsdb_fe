@@ -1,4 +1,4 @@
-import TelegramLoginWidget from "@/components/TelegramLoginWidget";
+import PinLogin from "@/components/PinLogin";
 
 export default function LoginPage() {
   return (
@@ -13,9 +13,9 @@ export default function LoginPage() {
 
       <div className="border border-[#1e1e1e] p-8 flex flex-col items-center gap-4 w-80">
         <p className="font-mono text-xs text-[#555] text-center leading-relaxed">
-          Sign in with Telegram to access your saved knowledge
+          Send <span className="text-[#e2d9c8]">/pin</span> to your Telegram bot to get a login code
         </p>
-        <TelegramLoginWidget />
+        <PinLogin />
       </div>
     </div>
   );
