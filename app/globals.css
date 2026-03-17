@@ -1,46 +1,72 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-:root {
+@theme {
   --font-playfair: "Playfair Display", serif;
   --font-mono: "IBM Plex Mono", monospace;
 }
 
-* {
-  box-sizing: border-box;
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-[#0a0a0a] text-zinc-100;
+  }
 }
 
 ::selection {
-  background: #e2d9c8;
-  color: #0c0c0c;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
 }
 
-input::placeholder {
-  color: #3a3a3a;
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: #0c0c0c; }
-::-webkit-scrollbar-thumb { background: #2a2a2a; }
-
-/* Card hover */
-.save-card:hover {
-  background: #141414;
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-/* Search input focus */
-.search-input:focus {
-  outline: none;
-  border-color: #e2d9c8;
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
 }
 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
-.animate-fade-up {
-  animation: fadeUp 0.3s ease forwards;
+/* Smooth motion for layout transitions */
+.layout-transition {
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Glassmorphism utility */
+.glass {
+  @apply bg-white/[0.03] backdrop-blur-xl border border-white/[0.08];
+}
+
+/* Hover glow for cards */
+.hover-glow:hover {
+  box-shadow: 0 0 40px -10px rgba(255, 255, 255, 0.05);
+}
+
+/* Typography refinements */
+h1, h2, h3, h4, h5, h6 {
+  @apply tracking-tight;
+}
+
+.font-serif {
+  font-family: var(--font-playfair);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
 }

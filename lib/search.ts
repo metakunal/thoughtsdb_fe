@@ -27,9 +27,9 @@ export async function getEmbedding(
       });
       const data = await response.json();
       return data.embeddings.float[0];
-    } catch (err: any) {
+    } catch (err) {
       if (i === retries - 1) {
-        console.error("Embedding failed after retries:", err.message);
+        console.error("Embedding failed after retries:", err instanceof Error ? err.message : String(err));
         return null;
       }
       await new Promise((r) => setTimeout(r, (i + 1) * 1000));
